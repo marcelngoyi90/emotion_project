@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emotion Detection — NLP Project Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050508;
+  --surface: #0c0c12;
+  --card: #0f0f18;
+  --border: #1a1a28;
+  --border2: #242438;
+  --e1: #ff4d6d;   /* joy */
+  --e2: #ffbe0b;   /* fear */
+  --e3: #3a86ff;   /* sadness */
+  --e4: #8338ec;   /* anger */
+  --e5: #06d6a0;   /* love */
+  --e6: #fb5607;   /* surprise */
+  --text: #f0f0f8;
+  --muted: #555568;
+  --muted2: #888899;
+  --glow1: rgba(255,77,109,0.15);
+  --glow2: rgba(58,134,255,0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ─── ANIMATED GRID BACKGROUND ─── */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: 0;
+  animation: orbDrift 20s ease-in-out infinite alternate;
+}
+.bg-orb-1 { width: 600px; height: 600px; background: var(--glow1); top: -200px; left: -200px; }
+.bg-orb-2 { width: 500px; height: 500px; background: var(--glow2); bottom: -150px; right: -150px; animation-delay: -10s; }
+
+@keyframes orbDrift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(40px, 30px) scale(1.1); }
+}
+
+/* ─── MAIN WRAPPER ─── */
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 24px 120px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 0 60px;
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  animation: fadeSlideUp 0.8s ease both;
+}
+
+.hero-eyebrow span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+.hero-eyebrow .dot-sep {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.emotion-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  animation: fadeSlideUp 0.8s 0.1s ease both;
+}
+
+.epill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid;
+  opacity: 0.75;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.epill:hover { opacity: 1; transform: translateY(-2px); }
+.epill-1 { color: var(--e1); border-color: var(--e1); background: rgba(255,77,109,0.08); }
+.epill-2 { color: var(--e2); border-color: var(--e2); background: rgba(255,190,11,0.08); }
+.epill-3 { color: var(--e3); border-color: var(--e3); background: rgba(58,134,255,0.08); }
+.epill-4 { color: var(--e4); border-color: var(--e4); background: rgba(131,56,236,0.08); }
+.epill-5 { color: var(--e5); border-color: var(--e5); background: rgba(6,214,160,0.08); }
+.epill-6 { color: var(--e6); border-color: var(--e6); background: rgba(251,86,7,0.08); }
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 12vw, 140px);
+  line-height: 0.9;
+  letter-spacing: 2px;
+  margin-bottom: 32px;
+  animation: fadeSlideUp 0.8s 0.15s ease both;
+}
+
+.hero-title .line2 {
+  display: block;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+  color: transparent;
+  position: relative;
+}
+
+.hero-title .line2::after {
+  content: 'DETECTION';
+  position: absolute;
+  left: 0;
+  background: linear-gradient(90deg, var(--e1), var(--e2), var(--e3), var(--e5));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200%;
+  animation: gradShift 4s ease infinite;
+}
+
+@keyframes gradShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-sub {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+  animation: fadeSlideUp 0.8s 0.25s ease both;
+}
+
+.hero-desc {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--muted2);
+  max-width: 400px;
+}
+
+.hero-desc strong { color: var(--text); font-weight: 600; }
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hstat {
+  background: var(--card);
+  padding: 20px;
+  transition: background 0.2s;
+}
+.hstat:hover { background: #13131e; }
+
+.hstat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.hstat-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: fadeSlideUp 1s 0.6s ease both;
+}
+
+.scroll-line {
+  width: 40px;
+  height: 1px;
+  background: var(--muted);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  left: -100%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--text);
+  animation: scanLine 2s ease infinite;
+}
+@keyframes scanLine {
+  to { left: 100%; }
+}
+
+/* ─── PROGRESS OVERVIEW ─── */
+.progress-section {
+  margin-bottom: 80px;
+  animation: fadeSlideUp 0.7s ease both;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+.global-pct {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  background: linear-gradient(135deg, var(--e1), var(--e3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.progress-bar-outer {
+  height: 6px;
+  background: var(--border2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--e1), var(--e2), var(--e3), var(--e5));
+  background-size: 200%;
+  animation: gradShift 4s ease infinite;
+  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.progress-phases {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.pp-seg {
+  position: relative;
+  cursor: pointer;
+}
+.pp-bar {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border2);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.pp-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.pp-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pp-seg:hover .pp-label { color: var(--muted2); }
+
+/* ─── PHASE CARDS ─── */
+.phases-wrapper { display: flex; flex-direction: column; gap: 16px; }
+
+.phase-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  animation: fadeSlideUp 0.6s ease both;
+}
+.phase-card:hover {
+  border-color: var(--border2);
+  box-shadow: 0 0 0 1px var(--border2);
+}
+.phase-card.open {
+  border-color: var(--border2);
+  box-shadow: 0 8px 48px -12px rgba(0,0,0,0.6);
+}
+
+.phase-card:nth-child(1) { animation-delay: 0.05s; }
+.phase-card:nth-child(2) { animation-delay: 0.1s; }
+.phase-card:nth-child(3) { animation-delay: 0.15s; }
+.phase-card:nth-child(4) { animation-delay: 0.2s; }
+.phase-card:nth-child(5) { animation-delay: 0.25s; }
+.phase-card:nth-child(6) { animation-delay: 0.3s; }
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 28px;
+  cursor: pointer;
+  user-select: none;
+  gap: 20px;
+  position: relative;
+}
+
+.phase-accent-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  transition: opacity 0.3s;
+}
+.phase-card:not(.open) .phase-accent-line { opacity: 0.3; }
+.phase-card.open .phase-accent-line { opacity: 1; }
+
+.phase-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  line-height: 1;
+  opacity: 0.12;
+  min-width: 48px;
+  transition: opacity 0.2s;
+}
+.phase-card.open .phase-number,
+.phase-card:hover .phase-number { opacity: 0.25; }
+
+.phase-info { flex: 1; }
+
+.phase-tag {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+  border: 1px solid;
+}
+
+.phase-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.phase-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 6px;
+}
+
+.phase-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.phase-mini-bar {
+  flex: 1;
+  max-width: 80px;
+  height: 2px;
+  background: var(--border2);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.phase-mini-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width 0.4s ease;
+}
+
+.phase-chevron {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 11px;
+  transition: all 0.25s;
+  flex-shrink: 0;
+}
+.phase-card.open .phase-chevron {
+  transform: rotate(180deg);
+  border-color: var(--border2);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ─── PHASE BODY ─── */
+.phase-body {
+  display: none;
+  border-top: 1px solid var(--border);
+}
+.phase-card.open .phase-body { display: block; }
+
+.phase-body-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.body-col {
+  padding: 28px;
+}
+.body-col:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.col-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.col-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.col-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
+.task-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.task-item:hover {
+  background: rgba(255,255,255,0.03);
+  border-color: var(--border);
+}
+.task-item.done {
+  opacity: 0.4;
+}
+.task-item.done .task-text { text-decoration: line-through; }
+.task-item.done .check-box {
+  background: var(--check-color, #06d6a0);
+  border-color: var(--check-color, #06d6a0);
+  color: #000;
+}
+
+.check-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  border: 1.5px solid var(--border2);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+
+.task-text {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: #b0b0c8;
+  flex: 1;
+}
+
+.task-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border: 1px solid;
+  opacity: 0.7;
+}
+
+/* ─── NOTE BOX ─── */
+.note-box {
+  margin: 0 28px 24px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1px solid;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.note-text {
+  font-size: 12.5px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* ─── BOTTOM STATS ─── */
+.bottom-stats {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: fadeSlideUp 0.6s 0.5s ease both;
+}
+
+.bstat {
+  background: var(--card);
+  padding: 32px 28px;
+  transition: background 0.2s;
+}
+.bstat:hover { background: #13131e; }
+
+.bstat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.bstat-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.reset-btn {
+  display: block;
+  margin: 24px auto 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.reset-btn:hover { border-color: var(--e1); color: var(--e1); }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 700px) {
+  .hero-sub { grid-template-columns: 1fr; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .phase-body-inner { grid-template-columns: 1fr; }
+  .body-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+  .progress-phases { grid-template-columns: repeat(3, 1fr); }
+  .bottom-stats { grid-template-columns: 1fr 1fr; }
+  .bottom-stats .bstat:last-child { grid-column: span 2; }
+  .hero-title { font-size: clamp(56px, 15vw, 100px); }
+  .phase-number { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<div class="wrap">
+
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="hero-eyebrow">
+      <span>NLP Class Project</span>
+      <div class="dot-sep"></div>
+      <span>Cyprus International University</span>
+      <div class="dot-sep"></div>
+      <span>Dr. Melike</span>
+    </div>
+
+    <div class="emotion-pills">
+      <span class="epill epill-1">😄 joy</span>
+      <span class="epill epill-3">😢 sadness</span>
+      <span class="epill epill-4">😡 anger</span>
+      <span class="epill epill-2">😨 fear</span>
+      <span class="epill epill-5">🥰 love</span>
+      <span class="epill epill-6">😲 surprise</span>
+    </div>
+
+    <div class="hero-title">
+      EMOTION<br>
+      <span class="line2">DETECTION</span>
+    </div>
+
+    <div class="hero-sub">
+      <p class="hero-desc">
+        A <strong>complete project roadmap</strong> for building a text-based emotion classifier using
+        <strong>ANN, CNN, and Hybrid</strong> deep learning models. Check off tasks as you go.
+      </p>
+
+      <div class="hero-stats">
+        <div class="hstat">
+          <div class="hstat-num" style="color:var(--e1)" id="heroTotal">38</div>
+          <div class="hstat-label">Total Tasks</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-num" style="color:var(--e5)" id="heroDone">0</div>
+          <div class="hstat-label">Completed</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-num" style="color:var(--e3)">3</div>
+          <div class="hstat-label">Models</div>
+        </div>
+        <div class="hstat">
+          <div class="hstat-num" style="color:var(--e2)">6</div>
+          <div class="hstat-label">Phases</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll to start</span>
+    </div>
+  </section>
+
+  <!-- ─── PROGRESS ─── -->
+  <div class="progress-section">
+    <div class="section-header">
+      <span class="section-title">Overall Progress</span>
+      <span class="global-pct" id="globalPct">0%</span>
+    </div>
+    <div class="progress-bar-outer">
+      <div class="progress-bar-inner" id="globalBar" style="width:0%"></div>
+    </div>
+    <div class="progress-phases" id="phaseMinis"></div>
+  </div>
+
+  <!-- ─── PHASES ─── -->
+  <div class="phases-wrapper" id="phasesWrapper"></div>
+
+  <!-- ─── BOTTOM ─── -->
+  <div class="bottom-stats">
+    <div class="bstat">
+      <div class="bstat-num" style="color:var(--e5)" id="btmDone">0</div>
+      <div class="bstat-label">Tasks Done</div>
+    </div>
+    <div class="bstat">
+      <div class="bstat-num" style="color:var(--text)" id="btmTotal">0</div>
+      <div class="bstat-label">Total Tasks</div>
+    </div>
+    <div class="bstat">
+      <div class="bstat-num" style="color:var(--e3)" id="btmPct">0%</div>
+      <div class="bstat-label">Complete</div>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ Reset Progress</button>
+
+</div>
+
+<script>
+const PHASES = [
+  {
+    color: '#ff4d6d',
+    tag: 'Foundation',
+    name: 'Understand the Problem',
+    tagBg: 'rgba(255,77,109,0.1)',
+    learn: [
+      { text: 'What is Emotion Detection? How is it different from Sentiment Analysis?', badge: 'Concept', badgeColor: '#ff4d6d' },
+      { text: 'Study Ekman\'s 6 basic emotions: joy, sadness, anger, fear, love, surprise', badge: 'Theory', badgeColor: '#ff4d6d' },
+      { text: 'Why this is a multi-class NLP classification task', badge: 'Concept', badgeColor: '#ff4d6d' },
+      { text: 'Read 1–2 papers on text-based emotion detection (Google Scholar)', badge: 'Research', badgeColor: '#ff4d6d' },
+    ],
+    do: [
+      { text: 'Download the Kaggle Emotions dataset (~20k labeled tweets)' },
+      { text: 'Open in a notebook: check shape, head(), and label distribution' },
+      { text: 'Plot class distribution with a bar chart — check for imbalance' },
+      { text: 'Write the Introduction and Problem Statement section for the report' },
+    ],
+    note: { icon: '💡', text: 'The dataset has 6 emotion classes. Checking class imbalance early saves headaches later — it directly affects whether you need class weights during training.', color: '#ff4d6d', bg: 'rgba(255,77,109,0.06)' }
+  },
+  {
+    color: '#ffbe0b',
+    tag: 'Data Prep',
+    name: 'Preprocessing & EDA',
+    tagBg: 'rgba(255,190,11,0.1)',
+    learn: [
+      { text: 'What is tokenization? Word-level vs character-level vs subword', badge: 'NLP', badgeColor: '#ffbe0b' },
+      { text: 'Stopwords: what they are and when to remove vs keep for emotion tasks', badge: 'NLP', badgeColor: '#ffbe0b' },
+      { text: 'Stemming (Porter) vs Lemmatization — tradeoffs', badge: 'NLP', badgeColor: '#ffbe0b' },
+      { text: 'Text normalization: lowercasing, removing URLs, @mentions, numbers', badge: 'NLP', badgeColor: '#ffbe0b' },
+      { text: 'Why we need 3 splits (train/val/test) — not just 2', badge: 'ML', badgeColor: '#ffbe0b' },
+    ],
+    do: [
+      { text: 'Clean text: lowercase, strip URLs, @mentions, punctuation, digits' },
+      { text: 'Apply stopword removal using NLTK (but keep negation words!)' },
+      { text: 'Apply lemmatization with spaCy or NLTK WordNetLemmatizer' },
+      { text: 'Stratified split: 70% train / 15% val / 15% test' },
+      { text: 'Document every preprocessing step for the Dataset Description section' },
+    ],
+    note: { icon: '⚠️', text: 'For emotion data, be careful with stopwords. Words like "not", "very", "never" carry emotional weight. Consider keeping negation words even if they\'re in the stopword list.', color: '#ffbe0b', bg: 'rgba(255,190,11,0.06)' }
+  },
+  {
+    color: '#3a86ff',
+    tag: 'Representation',
+    name: 'Text Representation',
+    tagBg: 'rgba(58,134,255,0.1)',
+    learn: [
+      { text: 'Why word embeddings beat one-hot encoding for neural networks', badge: 'DL', badgeColor: '#3a86ff' },
+      { text: 'Embedding layers in Keras — trainable from scratch on your corpus', badge: 'Keras', badgeColor: '#3a86ff' },
+      { text: 'Pre-trained GloVe embeddings — what they are and how to load them', badge: 'Pretrained', badgeColor: '#3a86ff' },
+      { text: 'Keras Tokenizer + pad_sequences: vocab_size and max_len explained', badge: 'Keras', badgeColor: '#3a86ff' },
+      { text: 'How to choose max_len by plotting sentence length distribution', badge: 'Practical', badgeColor: '#3a86ff' },
+    ],
+    do: [
+      { text: 'Fit Keras Tokenizer on training set ONLY (never on val/test!)' },
+      { text: 'Convert texts to integer sequences and pad to max_len' },
+      { text: 'Download GloVe 50d or 100d and build the embedding matrix' },
+      { text: 'Verify embedding matrix shape: (vocab_size, embedding_dim)' },
+    ],
+    note: { icon: '🚀', text: 'Using GloVe pretrained vectors instead of random initialization gives a consistent +3–5% accuracy boost for small datasets. Worth the 10 minutes of setup.', color: '#3a86ff', bg: 'rgba(58,134,255,0.06)' }
+  },
+  {
+    color: '#8338ec',
+    tag: 'Core Work',
+    name: 'Build Your 3 Models',
+    tagBg: 'rgba(131,56,236,0.1)',
+    learn: [
+      { text: 'ANN architecture: Embedding → GlobalAvgPool → Dense → Softmax', badge: 'ANN', badgeColor: '#8338ec' },
+      { text: 'CNN for text: how Conv1D captures n-gram patterns (local features)', badge: 'CNN', badgeColor: '#8338ec' },
+      { text: 'GlobalMaxPooling1D — why it works better than Flatten for text', badge: 'CNN', badgeColor: '#8338ec' },
+      { text: 'BiLSTM: reads sequence both forward and backward for richer context', badge: 'RNN', badgeColor: '#8338ec' },
+      { text: 'Hybrid model: CNN branch + BiLSTM branch → Concatenate → Dense', badge: 'Hybrid', badgeColor: '#8338ec' },
+      { text: 'Dropout regularization — prevents overfitting on small datasets', badge: 'Reg.', badgeColor: '#8338ec' },
+      { text: 'Softmax output + categorical crossentropy + Adam optimizer', badge: 'Training', badgeColor: '#8338ec' },
+    ],
+    do: [
+      { text: 'Build Model 1: ANN baseline (Embedding → GlobalAvgPool → Dense)' },
+      { text: 'Build Model 2: CNN (Embedding → Conv1D → GlobalMaxPool → Dense)' },
+      { text: 'Build Model 3: Hybrid (CNN + BiLSTM branches → Concat → Dense)' },
+      { text: 'Print model.summary() for each — note parameter counts!' },
+      { text: 'Add EarlyStopping + ModelCheckpoint callbacks' },
+      { text: 'Train all 3 models, save history (loss + accuracy per epoch)' },
+    ],
+    note: { icon: '🎯', text: 'All 3 models are required by Dr. Melike. Building them in order (ANN → CNN → Hybrid) lets you see the performance jump at each step — perfect for your Discussion section.', color: '#8338ec', bg: 'rgba(131,56,236,0.06)' }
+  },
+  {
+    color: '#06d6a0',
+    tag: 'Evaluation',
+    name: 'Evaluate & Analyze',
+    tagBg: 'rgba(6,214,160,0.1)',
+    learn: [
+      { text: 'Precision vs Recall vs F1-score — what each means per emotion class', badge: 'Metrics', badgeColor: '#06d6a0' },
+      { text: 'Macro vs Weighted F1 — which one to report for imbalanced data', badge: 'Metrics', badgeColor: '#06d6a0' },
+      { text: 'Confusion matrix for multi-class problems — how to read it', badge: 'Metrics', badgeColor: '#06d6a0' },
+      { text: 'Overfitting vs underfitting — spotting it in accuracy/loss curves', badge: 'DL', badgeColor: '#06d6a0' },
+      { text: 'Learnable parameters: what model.count_params() tells you', badge: 'Theory', badgeColor: '#06d6a0' },
+    ],
+    do: [
+      { text: 'Plot training vs validation accuracy curves for all 3 models' },
+      { text: 'Plot training vs validation loss curves for all 3 models' },
+      { text: 'Generate confusion matrix on test set (seaborn heatmap)' },
+      { text: 'Print sklearn classification_report for precision/recall/F1' },
+      { text: 'Record model.count_params() for all 3 models' },
+      { text: 'Build comparison table: Model | Accuracy | F1 | Parameters' },
+    ],
+    note: { icon: '📊', text: 'Your results section needs ALL of the above. The comparison table is what makes the Discussion section easy to write — it gives you something concrete to analyze.', color: '#06d6a0', bg: 'rgba(6,214,160,0.06)' }
+  },
+  {
+    color: '#fb5607',
+    tag: 'Report',
+    name: 'Write the Report',
+    tagBg: 'rgba(251,86,7,0.1)',
+    learn: [
+      { text: 'Academic Introduction structure: broad context → specific problem → your approach', badge: 'Writing', badgeColor: '#fb5607' },
+      { text: 'How to describe a neural architecture: layers, activation functions, shapes', badge: 'Writing', badgeColor: '#fb5607' },
+      { text: 'Discussion writing: compare models, explain why one outperforms another', badge: 'Writing', badgeColor: '#fb5607' },
+    ],
+    do: [
+      { text: 'Introduction: emotion detection context, importance, your objective' },
+      { text: 'Problem Statement: dataset, task definition, your chosen approach' },
+      { text: 'Dataset Description: size, splits, every preprocessing step with justification' },
+      { text: 'Proposed Models: describe each architecture with a layer table or diagram' },
+      { text: 'Results: all plots, classification report, confusion matrix, param counts' },
+      { text: 'Discussion & Conclusion: model comparison, limitations, future work' },
+      { text: 'Final check: every figure is labeled, captioned, and referenced in text' },
+    ],
+    note: { icon: '📝', text: 'Each section maps directly to Dr. Melike\'s requirements. Don\'t skip the learnable parameter count — it\'s explicitly listed in the rubric.', color: '#fb5607', bg: 'rgba(251,86,7,0.06)' }
+  }
+];
+
+const KEY = 'emdet_v2';
+let done = new Set(JSON.parse(localStorage.getItem(KEY) || '[]'));
+
+function save() { localStorage.setItem(KEY, JSON.stringify([...done])); }
+
+function totalTasks() {
+  return PHASES.reduce((a, p) => a + p.learn.length + p.do.length, 0);
+}
+
+function phaseDone(pi) {
+  let c = 0;
+  PHASES[pi].learn.forEach((_, ti) => { if (done.has(`${pi}-l-${ti}`)) c++; });
+  PHASES[pi].do.forEach((_, ti) => { if (done.has(`${pi}-d-${ti}`)) c++; });
+  return c;
+}
+
+function phaseTotal(pi) {
+  return PHASES[pi].learn.length + PHASES[pi].do.length;
+}
+
+function updateStats() {
+  const total = totalTasks();
+  const d = done.size;
+  const pct = Math.round((d / total) * 100);
+
+  document.getElementById('heroDone').textContent = d;
+  document.getElementById('globalPct').textContent = pct + '%';
+  document.getElementById('globalBar').style.width = pct + '%';
+  document.getElementById('btmDone').textContent = d;
+  document.getElementById('btmTotal').textContent = total;
+  document.getElementById('btmPct').textContent = pct + '%';
+
+  // mini phase bars
+  PHASES.forEach((_, pi) => {
+    const fill = document.getElementById(`pp-fill-${pi}`);
+    const label = document.getElementById(`pp-label-${pi}`);
+    if (!fill) return;
+    const pd = phaseDone(pi), pt = phaseTotal(pi);
+    fill.style.width = Math.round((pd / pt) * 100) + '%';
+    if (label) label.textContent = `${String(pi + 1).padStart(2,'0')} · ${pd}/${pt}`;
+
+    // update phase card mini bar
+    const pFill = document.getElementById(`pmini-${pi}`);
+    if (pFill) pFill.style.width = Math.round((pd / pt) * 100) + '%';
+    const pCount = document.getElementById(`pcount-${pi}`);
+    if (pCount) pCount.textContent = `${pd} / ${pt} done`;
+  });
+}
+
+function toggleTask(id, el) {
+  if (done.has(id)) { done.delete(id); }
+  else { done.add(id); }
+  el.classList.toggle('done', done.has(id));
+  el.querySelector('.check-box').textContent = done.has(id) ? '✓' : '';
+  save();
+  updateStats();
+}
+
+function togglePhase(pi) {
+  const card = document.getElementById(`pc-${pi}`);
+  card.classList.toggle('open');
+}
+
+function renderMinis() {
+  const container = document.getElementById('phaseMinis');
+  PHASES.forEach((p, pi) => {
+    const seg = document.createElement('div');
+    seg.className = 'pp-seg';
+    seg.onclick = () => { togglePhase(pi); document.getElementById(`pc-${pi}`).scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    seg.innerHTML = `
+      <div class="pp-bar"><div class="pp-fill" id="pp-fill-${pi}" style="background:${p.color};width:0%"></div></div>
+      <div class="pp-label" id="pp-label-${pi}">0${pi + 1} · 0/${phaseTotal(pi)}</div>
+    `;
+    container.appendChild(seg);
+  });
+}
+
+function renderPhases() {
+  const wrap = document.getElementById('phasesWrapper');
+  PHASES.forEach((phase, pi) => {
+    const card = document.createElement('div');
+    card.className = 'phase-card';
+    card.id = `pc-${pi}`;
+
+    const learnHTML = phase.learn.map((t, ti) => {
+      const id = `${pi}-l-${ti}`;
+      const isDone = done.has(id) ? 'done' : '';
+      const check = done.has(id) ? '✓' : '';
+      return `<li class="task-item ${isDone}" onclick="toggleTask('${id}', this)" style="--check-color:${phase.color}">
+        <div class="check-box">${check}</div>
+        <span class="task-text">${t.text}</span>
+        ${t.badge ? `<span class="task-badge" style="color:${t.badgeColor};border-color:${t.badgeColor};background:rgba(0,0,0,0.3)">${t.badge}</span>` : ''}
+      </li>`;
+    }).join('');
+
+    const doHTML = phase.do.map((t, ti) => {
+      const id = `${pi}-d-${ti}`;
+      const isDone = done.has(id) ? 'done' : '';
+      const check = done.has(id) ? '✓' : '';
+      return `<li class="task-item ${isDone}" onclick="toggleTask('${id}', this)" style="--check-color:${phase.color}">
+        <div class="check-box">${check}</div>
+        <span class="task-text">${t.text}</span>
+      </li>`;
+    }).join('');
+
+    const noteHTML = phase.note ? `
+      <div class="note-box" style="border-color:${phase.note.color};background:${phase.note.bg}">
+        <span class="note-icon">${phase.note.icon}</span>
+        <span class="note-text" style="color:${phase.note.color}">${phase.note.text}</span>
+      </div>` : '';
+
+    card.innerHTML = `
+      <div class="phase-accent-line" style="background:${phase.color}"></div>
+      <div class="phase-header" onclick="togglePhase(${pi})">
+        <div class="phase-number" style="color:${phase.color}">0${pi + 1}</div>
+        <div class="phase-info">
+          <div class="phase-tag" style="color:${phase.color};border-color:${phase.color};background:${phase.tagBg}">${phase.tag}</div>
+          <div class="phase-name">${phase.name}</div>
+          <div class="phase-meta">
+            <span class="phase-count" id="pcount-${pi}">0 / ${phaseTotal(pi)} done</span>
+            <div class="phase-mini-bar"><div class="phase-mini-fill" id="pmini-${pi}" style="background:${phase.color};width:0%"></div></div>
+          </div>
+        </div>
+        <div class="phase-chevron">▾</div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-body-inner">
+          <div class="body-col">
+            <div class="col-header">
+              <div class="col-icon" style="background:rgba(255,255,255,0.05)">📚</div>
+              <span class="col-title">Learn First</span>
+            </div>
+            <ul class="task-list">${learnHTML}</ul>
+          </div>
+          <div class="body-col">
+            <div class="col-header">
+              <div class="col-icon" style="background:rgba(255,255,255,0.05)">🛠</div>
+              <span class="col-title">Then Do It</span>
+            </div>
+            <ul class="task-list">${doHTML}</ul>
+          </div>
+        </div>
+        ${noteHTML}
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+function resetAll() {
+  if (confirm('Reset all progress?')) {
+    done.clear(); save();
+    document.querySelectorAll('.task-item').forEach(el => {
+      el.classList.remove('done');
+      el.querySelector('.check-box').textContent = '';
+    });
+    updateStats();
+  }
+}
+
+// Init
+document.getElementById('heroTotal').textContent = totalTasks();
+document.getElementById('btmTotal').textContent = totalTasks();
+renderMinis();
+renderPhases();
+updateStats();
+
+// Open first phase
+document.getElementById('pc-0').classList.add('open');
+</script>
+</body>
+</html>
